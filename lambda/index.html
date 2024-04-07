@@ -44,8 +44,12 @@
                 <pre id="shortner-url"> </pre>
                 <button class="material-symbols-outlined" id="copy-short-url" title="Copy shortened URL">content_copy</button>
             </div>
-            <br />
-            <b>iOS only:</b> <a id="add-to-pocket-casts" href="">Add to pocket casts link</a>
+            <p>
+                <a href="pktc://open">Open <b>Pocket Casts</b></a>
+            </p>
+            <p>
+                <b>iOS only:</b> <a id="add-to-pocket-casts" href="">Add to pocket casts link</a>
+            </p>
         </main>
         
         <script>
@@ -71,7 +75,7 @@
                     // Hosted on the same domain
                     const customUrl = new URL(document.location.origin);
                     customUrl.searchParams.append("rssUrl", urlInput.value);
-                    
+
                     shortnerUrl.innerText = customUrl.toString();
                     window.getSelection().selectAllChildren(shortnerUrl);
                     addToPocketCastsUrl.href = getPocketCastsLink(customUrl);
