@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Pocket Casts Fixer Site
+Resources:
+  PocketCastsConverter:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: pocket-casts-converter
+      CodeUri: lambda
+      MemorySize: 128
+      Timeout: 3
+      Handler: index.handler
+      Runtime: nodejs20.x
+      FunctionUrlConfig:
+        AuthType: NONE
+        InvokeMode: BUFFERED
+        Cors:
+          AllowOrigins:
+            - '*'
+          MaxAge: 0
+      PackageType: Zip
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+              Resource: !Sub ["arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*", {}]
+            - Effect: Allow
+              Action:
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource:
+                - !Sub ["arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/pocket-casts-converter:*", {}]
+      SnapStart:
+        ApplyOn: None
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto

@@ -1,0 +1,23 @@
+#!/bin/bash -ex
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+export AWS_DEFAULT_REGION=us-east-1
+
+generated_template="/tmp/pocket-casts-fixer-generated-cloudformation.yml"
+
+aws cloudformation package \
+    --template-file "${DIR}/cloudformation.yml" \
+    --s3-bucket sam-915290536872 \
+    --output-template-file "${generated_template}" \
+    --use-json
+
+code_uri="$(jq '.Resources.PocketCastsConverter.Properties.CodeUri' "${generated_template}" --raw-output --exit-status)"
+
+aws cloudformation deploy \
+    --template-file "${generated_template}" \
+    --stack-name "pocket-casts-fixer" \
+    --capabilities CAPABILITY_IAM \
+    --no-fail-on-empty-changeset \
+    --parameter-overrides \
+    "DeploymentContentVersion=${code_uri}"

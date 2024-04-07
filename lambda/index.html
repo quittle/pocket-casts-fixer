@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PocketCast RSS Feed Fixer</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <style type="text/css">
+            form {
+                display: flex;
+                justify-content: center;
+                gap: 1em
+            }
+            main {
+                font-size: 1.5em;
+                max-width: 100%;
+            }
+            input, button {
+                font-size: 1em;
+                padding: 0.5em;
+            }
+            #short-url-holder {
+                display: flex;
+                gap: 1em;
+            }
+            #shortner-url {
+                background: rgb(223, 222, 222);
+                padding: 0.5em;
+                flex-grow: 1;
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Pocket Casts Fixer</h1>
+        <main>
+            <p>
+                Paste your RSS feed URL here and copy the link into Pocket Casts.
+            </p>
+            <form>
+                <input type="url" placeholder="URL" />
+                <button type="submit">Get</button>
+            </form>
+            <div id="short-url-holder">
+                <pre id="shortner-url"> </pre>
+                <button class="material-symbols-outlined" id="copy-short-url" title="Copy shortened URL">content_copy</button>
+            </div>
+            <br />
+            <b>iOS only:</b> <a id="add-to-pocket-casts" href="">Add to pocket casts link</a>
+        </main>
+        
+        <script>
+            function getPocketCastsLink(rssUrl) {
+                const urlString = rssUrl.toString();
+                const urlWithoutScheme = urlString.split("://")[1];
+                return `pktc://subscribe/${urlString}`
+            }
+
+            function init() {
+                const form = document.querySelector("form");
+                const urlInput = document.querySelector("form input[type=url]");
+                const submitButton = document.querySelector("form buttom[type=submit]");
+                const shortnerUrl = document.getElementById("shortner-url");
+                const copyButton = document.getElementById("copy-short-url");
+                const addToPocketCastsUrl = document.getElementById("add-to-pocket-casts");
+
+                urlInput.addEventListener("input", () => {
+                    updateUrl();
+                });
+
+                function updateUrl() {
+                    // Hosted on the same domain
+                    const customUrl = new URL(document.location.origin);
+                    customUrl.searchParams.append("rssUrl", urlInput.value);
+                    
+                    shortnerUrl.innerText = customUrl.toString();
+                    window.getSelection().selectAllChildren(shortnerUrl);
+                    addToPocketCastsUrl.href = getPocketCastsLink(customUrl);
+                }
+
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    updateUrl();
+
+                    return false;
+                });
+                copyButton.addEventListener("click", async () => {
+                    await navigator.clipboard.writeText(shortnerUrl.innerText);
+                });
+            }
+            
+            init();
+        </script>
+    </body>
+</html>
