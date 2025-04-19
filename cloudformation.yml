@@ -8,9 +8,9 @@ Resources:
       FunctionName: pocket-casts-converter
       CodeUri: lambda
       MemorySize: 128
-      Timeout: 3
+      Timeout: 10
       Handler: index.handler
-      Runtime: nodejs20.x
+      Runtime: nodejs22.x
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: BUFFERED
